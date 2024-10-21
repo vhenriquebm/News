@@ -38,6 +38,7 @@ class URLSessionNetworking: NetworkingService {
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .iso8601
                 let decodedData = try decoder.decode(T.self, from: data)
+                completion(.success(decodedData))
             } catch {
                 completion(.failure(error))
                 return

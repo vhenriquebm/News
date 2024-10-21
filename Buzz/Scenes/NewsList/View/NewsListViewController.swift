@@ -8,8 +8,12 @@
 import UIKit
 
 class NewsListViewController: UIViewController {
+    private let interactor = NewsListInteractor()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .red
+        self.interactor.loadNews(request: NewsListModel.FetchNews.Request())
     }
 }
