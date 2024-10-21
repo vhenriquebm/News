@@ -5,8 +5,11 @@
 //  Created by Vitor Henrique Barreiro Marinho on 18/10/24.
 //
 
-import Foundation
+import UIKit
 
-class NewsListViewController {
+class NewsListViewController: UIViewController {
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
 }
