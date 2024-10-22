@@ -19,7 +19,7 @@ protocol NewsListDataStore {
 
 class NewsListInteractor: NewsListInteractorProtocol {
     private var worker: NewsApiWorker
-    private var presenter: NewsListPresentationLogic?
+    var presenter: NewsListPresentationLogic?
     var articles = [Article]()
     
     init(worker: NewsApiWorker = NewsApiWorker(service: URLSessionNetworking())) {

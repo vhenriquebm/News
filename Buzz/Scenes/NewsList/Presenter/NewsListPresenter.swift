@@ -13,6 +13,7 @@ protocol NewsListPresentationLogic {
 }
 
 class NewsListPresenter: NewsListPresentationLogic {
+    weak var viewController: NewsListDisplayLogic?
     
     func presentFetchedNews(response: NewsListModel.FetchNews.Response) {
         let displayedArticles = response.articles.map { article in
@@ -25,11 +26,11 @@ class NewsListPresenter: NewsListPresentationLogic {
         }
         
         let viewModel = NewsListModel.FetchNews.ViewModel(displayedArticles: displayedArticles)
+        
+        viewController?.displayFetchedNews(viewModel: viewModel)
     }
     
     func presentError(error: any Error) {
-        print (error.localizedDescription)
+        viewController?.displayError(message: error.localizedDescription)
     }
-    
-    
 }

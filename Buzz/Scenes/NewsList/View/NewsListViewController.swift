@@ -7,21 +7,30 @@
 
 import UIKit
 
+protocol NewsListDisplayLogic: AnyObject {
+    func displayFetchedNews(viewModel: NewsListModel.FetchNews.ViewModel)
+    func displayError(message: String)
+}
+
 class NewsListViewController: UIViewController {
-    private let interactor = NewsListInteractor()
+    var interactor: NewsListBusinessLogic?
+    var articles: [NewsListModel.FetchNews.ViewModel.DisplayedArticle] = []
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.register(NewsListArticleCell.self, forCellReuseIdentifier: NewsListArticleCell.identifier)
+        
         return tableView
     }()
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.interactor.loadNews(request: NewsListModel.FetchNews.Request())
+        setup()
+        fetchNews()
         setupView()
     }
     
@@ -42,6 +51,20 @@ class NewsListViewController: UIViewController {
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
     }
+    
+    private func fetchNews() {
+        self.interactor?.loadNews(request: NewsListModel.FetchNews.Request())
+    }
+    
+    private func setup() {
+        let viewController = self
+        let interactor = NewsListInteractor()
+        let presenter = NewsListPresenter()
+        
+        viewController.interactor = interactor
+        interactor.presenter = presenter
+        presenter.viewController = viewController
+    }
 }
 
 extension NewsListViewController: UITableViewDelegate {
@@ -51,15 +74,30 @@ extension NewsListViewController: UITableViewDelegate {
 extension NewsListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return articles.count
     }
     
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell()
-        var content = cell.defaultContentConfiguration()
-        content.text = "Noticia"
-        cell.contentConfiguration = content
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: NewsListArticleCell.identifier, for: indexPath) as! NewsListArticleCell
+        
+        cell.configure(with: articles[indexPath.row])
+        
         return cell
+    }
+}
+
+extension NewsListViewController: NewsListDisplayLogic {
+    
+    func displayFetchedNews(viewModel: NewsListModel.FetchNews.ViewModel) {
+        self.articles = viewModel.displayedArticles
+        tableView.reloadData()
+    }
+    
+    func displayError(message: String) {
+        let alert = UIAlertController(title: "Error!", message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: "Ok", style: .default)
+        alert.addAction(action)
+        present(alert, animated: true)
     }
 }
