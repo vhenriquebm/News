@@ -18,6 +18,7 @@ class NewsListPresenter: NewsListPresentationLogic {
     func presentFetchedNews(response: NewsListModel.FetchNews.Response) {
         let displayedArticles = response.articles.map { article in
             return NewsListModel.FetchNews.ViewModel.DisplayedArticle(
+                id: article.id, 
                 title: article.title,
                 description: article.description,
                 author: article.author,
